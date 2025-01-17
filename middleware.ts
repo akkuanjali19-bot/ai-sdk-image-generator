@@ -22,7 +22,7 @@ const corsOptions: {
   credentials: process.env?.CREDENTIALS == "true",
 };
 
-const MAX_REQUESTS = 30;
+const MAX_REQUESTS = 20;
 
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {
   // for testing the toast

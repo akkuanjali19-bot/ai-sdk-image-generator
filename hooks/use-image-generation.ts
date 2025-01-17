@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ImageError, ImageResult, ProviderTiming } from "@/lib/image-types";
 import { initializeProviderRecord, ProviderKey } from "@/lib/provider-config";
 import { toast } from "sonner";
+import { track } from "@vercel/analytics/react";
 
 interface UseImageGenerationReturn {
   images: ImageResult[];
@@ -102,6 +103,12 @@ export function useImageGeneration(): UseImageGenerationReturn {
           console.log(
             `Successful image response [provider=${provider}, modelId=${modelId}, elapsed=${elapsed}ms]`,
           );
+          track("image_generation", {
+            provider,
+            modelId,
+            elapsed,
+            prompt,
+          });
 
           // Update image in state
           setImages((prevImages) =>
@@ -113,7 +120,11 @@ export function useImageGeneration(): UseImageGenerationReturn {
           );
         } catch (err) {
           if (err instanceof Error && err.message.includes("Too many")) {
-            toast.error("Rate limit reached, please try again later", {id: "rate-limit", richColors: true, position: "top-center"});
+            toast.error("Rate limit reached, please try again later", {
+              id: "rate-limit",
+              richColors: true,
+              position: "top-center",
+            });
           }
           console.error(
             `Error [provider=${provider}, modelId=${modelId}]:`,
