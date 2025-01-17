@@ -55,6 +55,8 @@ export function ImageCarousel({
             return (
               <CarouselItem key={provider}>
                 <ImageDisplay
+                  rateLimited={false}
+                  error=""
                   modelId={
                     images?.find((img) => img.provider === provider)?.modelId ||
                     providerToModel[provider]

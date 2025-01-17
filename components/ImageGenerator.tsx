@@ -100,6 +100,8 @@ export function ImageGenerator({
           const timing = timings[provider];
           return (
             <ImageDisplay
+              rateLimited={false}
+              error={undefined}
               key={provider}
               provider={provider}
               image={imageData}
