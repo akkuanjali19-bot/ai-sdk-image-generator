@@ -30,6 +30,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
   //   return new Response('Too many requests (rate limit)', { status: 429 });
   // }
   //
+  //
   // Start with the CORS logic
   const response = NextResponse.next();
 
