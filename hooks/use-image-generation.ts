@@ -3,6 +3,7 @@ import { ImageError, ImageResult, ProviderTiming } from "@/lib/image-types";
 import { initializeProviderRecord, ProviderKey } from "@/lib/provider-config";
 import { toast } from "sonner";
 import { track } from "@vercel/analytics/react";
+import { APICallError } from "ai";
 
 interface UseImageGenerationReturn {
   images: ImageResult[];
@@ -17,6 +18,7 @@ interface UseImageGenerationReturn {
   ) => Promise<void>;
   resetState: () => void;
   activePrompt: string;
+  rateLimited: boolean;
 }
 
 export function useImageGeneration(): UseImageGenerationReturn {
@@ -28,6 +30,7 @@ export function useImageGeneration(): UseImageGenerationReturn {
   const [failedProviders, setFailedProviders] = useState<ProviderKey[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activePrompt, setActivePrompt] = useState("");
+  const [rateLimited, setRateLimited] = useState(false);
 
   const resetState = () => {
     setImages([]);
@@ -44,6 +47,7 @@ export function useImageGeneration(): UseImageGenerationReturn {
   ) => {
     setActivePrompt(prompt);
     try {
+      setRateLimited(false);
       setIsLoading(true);
       // Initialize images array with null values
       setImages(
@@ -120,6 +124,7 @@ export function useImageGeneration(): UseImageGenerationReturn {
           );
         } catch (err) {
           if (err instanceof Error && err.message.includes("Too many")) {
+            setRateLimited(true);
             toast.error("Rate limit reached, please try again later", {
               id: "rate-limit",
               richColors: true,
@@ -131,16 +136,27 @@ export function useImageGeneration(): UseImageGenerationReturn {
             err,
           );
           setFailedProviders((prev) => [...prev, provider]);
-          setErrors((prev) => [
-            ...prev,
-            {
-              provider,
-              message:
-                err instanceof Error
-                  ? err.message
-                  : "An unexpected error occurred",
-            },
-          ]);
+
+          if (APICallError.isInstance(err)) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                provider,
+                message: err.message,
+              },
+            ]);
+          } else {
+            setErrors((prev) => [
+              ...prev,
+              {
+                provider,
+                message:
+                  err instanceof Error
+                    ? err.message
+                    : "An unexpected error occurred",
+              },
+            ]);
+          }
 
           setImages((prevImages) =>
             prevImages.map((item) =>
@@ -175,5 +191,6 @@ export function useImageGeneration(): UseImageGenerationReturn {
     startGeneration,
     resetState,
     activePrompt,
+    rateLimited,
   };
 }

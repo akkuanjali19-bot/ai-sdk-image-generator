@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ImageModel, experimental_generateImage as generateImage } from "ai";
+import {
+  APICallError,
+  ImageModel,
+  experimental_generateImage as generateImage,
+} from "ai";
 import { openai } from "@ai-sdk/openai";
 import { fireworks } from "@ai-sdk/fireworks";
 import { replicate } from "@ai-sdk/replicate";
@@ -108,9 +112,16 @@ export async function POST(req: NextRequest) {
       `Error generating image [requestId=${requestId}, provider=${provider}, model=${modelId}]: `,
       error
     );
+
+    const message =
+      APICallError.isInstance(error) &&
+      error.message?.toLowerCase().includes("safety")
+        ? "Prompt contains unsafe content"
+        : "Failed to generate image. Please try again later.";
+
     return NextResponse.json(
       {
-        error: "Failed to generate image. Please try again later.",
+        error: message,
       },
       { status: 500 }
     );

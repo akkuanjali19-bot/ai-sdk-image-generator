@@ -28,6 +28,8 @@ export function ImagePlayground({
     isLoading,
     startGeneration,
     activePrompt,
+    rateLimited,
+    errors,
   } = useImageGeneration();
 
   const [showProviders, setShowProviders] = useState(true);
@@ -97,6 +99,10 @@ export function ImagePlayground({
                 const modelId = imageItem?.modelId ?? "N/A";
                 const timing = timings[key];
 
+                const err = errors
+                  .filter((e) => e.provider === key)
+                  .map((e) => e.message);
+
                 return {
                   label: provider.displayName,
                   models: provider.models,
@@ -113,17 +119,25 @@ export function ImagePlayground({
                   modelId,
                   timing,
                   failed: failedProviders.includes(key),
+                  error: err.pop(),
                 };
               });
 
             return (
               <>
                 <div className="md:hidden">
-                  <ModelCardCarousel models={getModelProps()} />
+                  <ModelCardCarousel
+                    models={getModelProps()}
+                    rateLimited={rateLimited}
+                  />
                 </div>
                 <div className="hidden md:grid md:grid-cols-2 2xl:grid-cols-4 gap-8">
                   {getModelProps().map((props) => (
-                    <ModelSelect key={props.label} {...props} />
+                    <ModelSelect
+                      key={props.label}
+                      {...props}
+                      rateLimited={rateLimited}
+                    />
                   ))}
                 </div>
                 {activePrompt && activePrompt.length > 0 && (

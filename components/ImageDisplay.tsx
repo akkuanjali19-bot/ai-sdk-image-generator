@@ -7,7 +7,12 @@ import { cn } from "@/lib/utils";
 import { imageHelpers } from "@/lib/image-helpers";
 import { ProviderTiming } from "@/lib/image-types";
 import { Label } from "@/components/ui/label";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface ImageDisplayProps {
   provider: string;
@@ -17,6 +22,8 @@ interface ImageDisplayProps {
   fallbackIcon?: React.ReactNode;
   enabled?: boolean;
   modelId: string;
+  rateLimited: boolean;
+  error?: string;
 }
 
 export function ImageDisplay({
@@ -26,6 +33,8 @@ export function ImageDisplay({
   failed,
   fallbackIcon,
   modelId,
+  rateLimited,
+  error
 }: ImageDisplayProps) {
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -133,7 +142,12 @@ export function ImageDisplay({
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             {failed ? (
-              fallbackIcon || <AlertCircle className="h-8 w-8 text-red-500" />
+              fallbackIcon || (
+                <div className="flex flex-col items-center justify-center">
+                  <AlertCircle className="h-8 w-8 text-red-500" />
+                    <div className="text-red-500 mt-4 font-medium text-sm">{rateLimited ? 'Rate Limited' : error}</div>
+                </div>
+              )
             ) : image ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}

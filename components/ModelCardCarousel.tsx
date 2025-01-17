@@ -29,10 +29,12 @@ interface ModelCardCarouselProps {
     timing?: ProviderTiming;
     failed?: boolean;
     modelId: string;
+    error?: string;
   }>;
+  rateLimited: boolean;
 }
 
-export function ModelCardCarousel({ models }: ModelCardCarouselProps) {
+export function ModelCardCarousel({ models, rateLimited }: ModelCardCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
   const initialized = useRef(false);
@@ -78,6 +80,7 @@ export function ModelCardCarousel({ models }: ModelCardCarouselProps) {
           {models.map((model, i) => (
             <CarouselItem key={model.label}>
               <ModelSelect
+                rateLimited={rateLimited}
                 {...model}
                 onChange={(value, providerKey) =>
                   model.onChange(value, providerKey)
