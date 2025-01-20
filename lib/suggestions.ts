@@ -47,7 +47,7 @@ const basePrompts: { text: string; prompt: string }[] = [
     prompt: "A fox walking through a field of lavender with a golden sunset",
   },
   {
-    text: "Armadillo Aerospace",
+    text: "Armadillo space",
     prompt:
       "An armadillo in a rocket at countdown preparing to blast off to Mars",
   },
