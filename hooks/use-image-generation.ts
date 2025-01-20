@@ -123,7 +123,13 @@ export function useImageGeneration(): UseImageGenerationReturn {
             ),
           );
         } catch (err) {
-          if (err instanceof Error && err.message.includes("Too many")) {
+          if (
+            (window.navigator.userAgent.indexOf("Safari") > -1 &&
+              err instanceof Error &&
+              err.message.includes("did not match the expected pattern")) ||
+            (err instanceof Error &&
+              err.message.toLowerCase().includes("too many"))
+          ) {
             setRateLimited(true);
             toast.error("Rate limit reached, please try again later", {
               id: "rate-limit",
@@ -131,6 +137,7 @@ export function useImageGeneration(): UseImageGenerationReturn {
               position: "top-center",
             });
           }
+
           console.error(
             `Error [provider=${provider}, modelId=${modelId}]:`,
             err,
