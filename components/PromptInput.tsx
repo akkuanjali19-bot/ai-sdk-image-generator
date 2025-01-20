@@ -79,14 +79,17 @@ export function PromptInput({
                   className={cn(
                     "flex items-center justify-between px-2 rounded-lg py-1 bg-background text-sm hover:opacity-70 group transition-opacity duration-200",
                     index > 2
-                      ? "hidden md:flex"
+                      ? "hidden lg:flex"
                       : index > 1
                         ? "hidden sm:flex"
                         : "",
                   )}
                 >
                   <span>
-                    <span className="text-black text-xs sm:text-sm">
+                    <span className="text-black text-sm sm:hidden">
+                      {suggestion.text.toLowerCase().split(" ")[0]}
+                    </span>
+                    <span className="text-black text-sm hidden sm:block">
                       {suggestion.text.toLowerCase()}
                     </span>
                   </span>
