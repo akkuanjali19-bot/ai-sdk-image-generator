@@ -7,10 +7,14 @@ import { vertex } from "@ai-sdk/google-vertex/edge";
 import { ProviderKey } from "@/lib/provider-config";
 import { GenerateImageRequest } from "@/lib/api-types";
 
-const TIMEOUT_MILLIS = 55 * 1000;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEFAULT_IMAGE_SIZE = "1024x1024";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEFAULT_ASPECT_RATIO = "1:1";
 
+// later
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const config = providerConfig[provider];
 interface ProviderConfig {
   createImageModel: (modelId: string) => ImageModel;
   dimensionFormat: "size" | "aspectRatio";
